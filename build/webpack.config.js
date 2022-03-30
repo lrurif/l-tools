@@ -1,11 +1,14 @@
-// webpack.config.js
+
 
 const path = require('path');
+
 module.exports = {
-    mode:'development', // 开发模式
-    entry: path.resolve(__dirname,'../src/main.js'),    // 入口文件
-    output: {
-        filename: 'index.js',      // 打包后的文件名称
-        path: path.resolve(__dirname,'../dist')  // 打包后的目录
-    }
+    mode: 'production',
+  entry: './src/main.js',
+  output: {
+    path: path.resolve(__dirname, '../dist'),
+    filename: 'bundle.js',
+    library: 'f_tools', // 导出变量名
+    libraryTarget: 'umd', // 所有的模块定义下都可运行的方式。它将在 CommonJS, AMD 环境下运行，或将模块导出到 global 下的变量
+  }
 }
