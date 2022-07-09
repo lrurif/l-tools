@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, user-scalable=no"
+    />
+    <title>Document</title>
+  </head>
+  <script
+    type="text/javascript"
+    src="https://webapi.amap.com/maps?v=1.4.15&key=2da7dfa60673162ba7e3777f892370a4&plugin=AMap.Geolocation,AMap.Walking"
+  ></script>
+  <script src="https://unpkg.com/vconsole@latest/dist/vconsole.min.js"></script>
+  <script>
+    // VConsole 默认会挂载到 `window.VConsole` 上
+    var vConsole = new window.VConsole();
+  </script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+    }
+    #container {
+      width: 100vw;
+      height: 100vh;
+    }
+  </style>
+  <body>
+    <div id="container"></div>
+  </body>
+  <!-- <script>
+    var map = new AMap.Map("container", {});
+    AMap.plugin("AMap.Geolocation", function () {
+      var geolocation = new AMap.Geolocation({
+        enableHighAccuracy: true, //是否使用高精度定位，默认:true
+        timeout: 10000, //超过10秒后停止定位，默认：5s
+        buttonPosition: "RB", //定位按钮的停靠位置
+        buttonOffset: new AMap.Pixel(10, 20), //定位按钮与设置的停靠位置的偏移量，默认：Pixel(10, 20)
+        zoomToAccuracy: true, //定位成功后是否自动调整地图视野到定位点
+      });
+      map.addControl(geolocation);
+      geolocation.getCurrentPosition(function (status, result) {
+        if (status == "complete") {
+          onComplete(result);
+        } else {
+          onError(result);
+        }
+      });
+    });
+    //解析定位结果
+    function onComplete(data) {
+      console.log(data, "data");
+    }
+    //解析定位错误信息
+    function onError(error) {
+      console.log(error, "error");
+    }
+
+    var icon = new AMap.Icon({
+      size: new AMap.Size(40, 50), // 图标尺寸
+      image: "https://router.vuejs.org/images/vueschool/vs-backpack.png", // Icon的图像
+      //   imageOffset: new AMap.Pixel(0, -60), // 图像相对展示区域的偏移量，适于雪碧图等
+      imageSize: new AMap.Size(40, 50), // 根据所设置的大小拉伸或压缩图片
+    });
+    let m1 = new AMap.Marker({
+      map: map,
+      icon: icon,
+      position: [116.69, 39.9],
+      offset: new AMap.Pixel(-13, -30),
+    });
+    m1.on("click", function () {
+      console.log(arguments, "arguments");
+    });
+    map.add(m1);
+    map.setCenter([116.69, 39.9]);
+
+    AMap.plugin("AMap.Walking", function () {
+      var walking = new AMap.Walking({
+        autoFitView: true,
+      });
+      walking.search([116.69, 39.9], [116.69, 39.6], function (status, route) {
+        if (status == "complete") {
+          drawRoute(route.routes[0]);
+        }
+      });
+    });
+    function drawRoute(routes) {
+      const steps = parseRouteToPath(routes);
+
+      var routeLine = new AMap.Polyline({
+        path: steps,
+        isOutline: true,
+        outlineColor: "red",
+        borderWeight: 2,
+        strokeWeight: 5,
+        strokeColor: "red",
+        lineJoin: "round",
+      });
+      map.add(routeLine);
+      map.setFitView(routeLine);
+      console.log(steps);
+    }
+    function parseRouteToPath(route) {
+      var path = [];
+
+      for (var i = 0, l = route.steps.length; i < l; i++) {
+        var step = route.steps[i];
+
+        for (var j = 0, n = step.path.length; j < n; j++) {
+          path.push(step.path[j]);
+        }
+      }
+
+      return path;
+    }
+
+    map.on("click", function (ev) {
+      console.log(ev.lnglat.lat + "," + ev.lnglat.lng);
+    });
+  </script> -->
+  <script>
+    function getRandomNum(start, end) {
+      return Math.round(Math.random() * (end - start) + start);
+    }
+    function createRandomPoint(num) {
+      let arr = [
+        [30.181231, 120.317307],
+        [30.195228, 120.25572],
+        [30.188106, 120.240142],
+        [30.193892, 120.29104],
+        [30.182244, 120.271556],
+        [30.169408, 120.254562],
+        [30.17104, 120.281083],
+        [30.180761, 120.267265],
+        [30.177867, 120.256879],
+        [30.188699, 120.27456],
+        [30.170715172356125, 120.24753122180698],
+      ];
+      let images = [
+        "https://img0.baidu.com/it/u=3798217922,3880088897&fm=253&fmt=auto&app=120&f=JPEG?w=889&h=500",
+        "https://img1.baidu.com/it/u=1966616150,2146512490&fm=253&fmt=auto&app=138&f=JPEG?w=751&h=500",
+        "https://img2.baidu.com/it/u=1814268193,3619863984&fm=253&fmt=auto&app=138&f=JPEG?w=632&h=500",
+        "https://img0.baidu.com/it/u=2972251030,4111072434&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=500",
+        "https://img0.baidu.com/it/u=2747776293,3603828582&fm=253&fmt=auto&app=120&f=JPEG?w=750&h=500",
+        "https://img1.baidu.com/it/u=3384796346,381674655&fm=253&fmt=auto&app=138&f=JPEG?w=889&h=500",
+        "https://img1.baidu.com/it/u=745998857,124348167&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=281",
+        "https://img1.baidu.com/it/u=4049022245,514596079&fm=253&fmt=auto&app=120&f=JPEG?w=889&h=500",
+      ];
+      return arr.map((item) => ({
+        lat: item[0],
+        lng: item[1],
+        icon: images[getRandomNum(0, images.length - 1)],
+      }));
+    }
+
+    class GaoDeDraw {
+      constructor(id, points) {
+        this.map = new AMap.Map(id);
+        this.points = points;
+        this.markers = [];
+        this.getUserGeo();
+        this.drawPoints();
+        this.lng = "120.29104000000001";
+        this.lat = "30.193892";
+        this.map.on("click", (e) => {
+          console.log(e);
+        });
+      }
+      drawPoints() {
+        this.points.forEach((item) => {
+          let icon = new AMap.Icon({
+            size: new AMap.Size(19, 31), // 图标尺寸
+            image: item.icon, // Icon的图像
+            imageSize: new AMap.Size(19, 31), // 根据所设置的大小拉伸或压缩图片
+          });
+          let marker = new AMap.Marker({
+            icon: icon,
+            position: [item.lng, item.lat],
+          });
+          this.map.add(marker);
+          this.markers.push(marker);
+          marker.on("click", (e) => {
+            let position = e.target.getPosition();
+            // console.log(e, "e",position );
+            this.handleMarkerClick(position.R, position.Q);
+          });
+        });
+      }
+      getUserGeo() {
+        this.geolocation = new AMap.Geolocation({
+          enableHighAccuracy: true, //是否使用高精度定位，默认:true
+          timeout: 10000, //超过10秒后停止定位，默认：5s
+          buttonPosition: "RB", //定位按钮的停靠位置
+          buttonOffset: new AMap.Pixel(10, 20), //定位按钮与设置的停靠位置的偏移量，默认：Pixel(10, 20)
+          zoomToAccuracy: true, //定位成功后是否自动调整地图视野到定位点
+        });
+        this.geolocation.getCurrentPosition((status, result) => {
+          if (status == "complete") {
+            this.lng = result.position.lng;
+            this.lat = result.position.lat;
+            let icon = new AMap.Icon({
+              size: new AMap.Size(19, 31), // 图标尺寸
+              image:
+                "https://img0.baidu.com/it/u=2747776293,3603828582&fm=253&fmt=auto&app=120&f=JPEG?w=750&h=500", // Icon的图像
+              imageSize: new AMap.Size(19, 31), // 根据所设置的大小拉伸或压缩图片
+            });
+            this.myMarker = new AMap.Marker({
+              icon,
+              position: [this.lng, this.lat],
+            });
+            this.map.add(this.myMarker);
+            this.map.setFitView([...this.markers, this.myMarker]);
+          }
+        });
+      }
+      handleMarkerClick(lng, lat) {
+        let walking = new AMap.Walking({
+          autoFitView: true,
+        });
+        console.log(this.lng, this.lat);
+        // debugger;
+
+        walking.search([this.lng, this.lat], [lng, lat], (status, route) => {
+          // debugge
+
+          if (status == "complete") {
+            console.log(route, "route");
+            alert(`距离目的地：${route.routes[0].distance}米`);
+            this.drawRoute(route.routes[0]);
+          }
+        });
+      }
+      drawRoute(routes) {
+        this.routeLine && this.map.remove(this.routeLine);
+        const steps = this.parseRouteToPath(routes);
+
+        this.routeLine = new AMap.Polyline({
+          path: steps,
+          isOutline: true,
+          outlineColor: "#0091ff",
+          borderWeight: 2,
+          strokeWeight: 5,
+          strokeColor: "#0091ff",
+          lineJoin: "round",
+          lineCap: "round",
+        });
+        this.map.add(this.routeLine);
+        this.map.setFitView(this.routeLine);
+      }
+      parseRouteToPath(route) {
+        let path = [];
+        for (let i = 0, l = route.steps.length; i < l; i++) {
+          let step = route.steps[i];
+          for (let j = 0, n = step.path.length; j < n; j++) {
+            path.push(step.path[j]);
+          }
+        }
+        return path;
+      }
+    }
+    new GaoDeDraw("container", createRandomPoint());
+  </script>
+</html>
