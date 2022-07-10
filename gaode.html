@@ -69,10 +69,10 @@
     class GaoDeDraw {
       constructor(id, points) {
         this.map = new AMap.Map(id, {
-          pitch:30, // 地图俯仰角度，有效范围 0 度- 83 度
-    viewMode:'3D', // 地图模式
-    terrain: true,
-    mapStyle: 'amap://styles/86b434afde723b99ce9e5fa2feba8542'
+          pitch: 30, // 地图俯仰角度，有效范围 0 度- 83 度
+          viewMode: "3D", // 地图模式
+          terrain: true,
+          // mapStyle: "amap://styles/86b434afde723b99ce9e5fa2feba8542",
         }); // 地图实例
         this.points = points; // 点位坐源数据
         this.markers = []; // 点位坐标
@@ -92,6 +92,9 @@
           let marker = new AMap.Marker({
             icon: icon,
             position: [item.lng, item.lat],
+            extData: {
+              id: item.icon,
+            },
           });
           this.map.add(marker);
           this.markers.push(marker);
@@ -131,10 +134,12 @@
       }
       handleMarkerClick(lng, lat) {
         let walking = new AMap.Walking({
+          map: this.map,
           autoFitView: true,
         });
         walking.search([this.lng, this.lat], [lng, lat], (status, route) => {
           if (status == "complete") {
+            return;
             console.log(route, "route");
             alert(`距离目的地：${route.routes[0].distance}米`);
             this.drawRoute(route.routes[0]);
@@ -142,14 +147,14 @@
         });
       }
       drawRoute(routes) {
-        this.routeLine && this.map.remove(this.routeLine);
+        this.map.remove(this.map.getAllOverlays("polyline"));
         const path = this.parseRouteToPath(routes);
         this.routeLine = new AMap.Polyline({
           path: path,
           isOutline: true,
           outlineColor: "#0091ff",
           borderWeight: 2,
-          strokeWeight: 5,
+          strokeWeight: 2,
           strokeColor: "#0091ff",
           lineJoin: "round",
           lineCap: "round",
@@ -169,12 +174,12 @@
       }
       getWeather(city) {
         //创建天气查询实例
-    let weather = new AMap.Weather();
+        let weather = new AMap.Weather();
 
-//执行实时天气信息查询
-weather.getLive('婺源', function(err, data) {
-    console.log(err, data);
-});
+        //执行实时天气信息查询
+        weather.getLive("婺源", function (err, data) {
+          console.log(err, data);
+        });
       }
     }
     let instance = new GaoDeDraw("container", createRandomPoint());
