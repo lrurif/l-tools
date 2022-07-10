@@ -11,7 +11,7 @@
   </head>
   <script
     type="text/javascript"
-    src="https://webapi.amap.com/maps?v=1.4.15&key=2da7dfa60673162ba7e3777f892370a4&plugin=AMap.Geolocation,AMap.Walking"
+    src="https://webapi.amap.com/maps?v=1.4.15&key=2da7dfa60673162ba7e3777f892370a4&plugin=AMap.Geolocation,AMap.Walking,AMap.Weather"
   ></script>
   <script src="https://unpkg.com/vconsole@latest/dist/vconsole.min.js"></script>
   <script>
@@ -31,96 +31,6 @@
   <body>
     <div id="container"></div>
   </body>
-  <!-- <script>
-    var map = new AMap.Map("container", {});
-    AMap.plugin("AMap.Geolocation", function () {
-      var geolocation = new AMap.Geolocation({
-        enableHighAccuracy: true, //是否使用高精度定位，默认:true
-        timeout: 10000, //超过10秒后停止定位，默认：5s
-        buttonPosition: "RB", //定位按钮的停靠位置
-        buttonOffset: new AMap.Pixel(10, 20), //定位按钮与设置的停靠位置的偏移量，默认：Pixel(10, 20)
-        zoomToAccuracy: true, //定位成功后是否自动调整地图视野到定位点
-      });
-      map.addControl(geolocation);
-      geolocation.getCurrentPosition(function (status, result) {
-        if (status == "complete") {
-          onComplete(result);
-        } else {
-          onError(result);
-        }
-      });
-    });
-    //解析定位结果
-    function onComplete(data) {
-      console.log(data, "data");
-    }
-    //解析定位错误信息
-    function onError(error) {
-      console.log(error, "error");
-    }
-
-    var icon = new AMap.Icon({
-      size: new AMap.Size(40, 50), // 图标尺寸
-      image: "https://router.vuejs.org/images/vueschool/vs-backpack.png", // Icon的图像
-      //   imageOffset: new AMap.Pixel(0, -60), // 图像相对展示区域的偏移量，适于雪碧图等
-      imageSize: new AMap.Size(40, 50), // 根据所设置的大小拉伸或压缩图片
-    });
-    let m1 = new AMap.Marker({
-      map: map,
-      icon: icon,
-      position: [116.69, 39.9],
-      offset: new AMap.Pixel(-13, -30),
-    });
-    m1.on("click", function () {
-      console.log(arguments, "arguments");
-    });
-    map.add(m1);
-    map.setCenter([116.69, 39.9]);
-
-    AMap.plugin("AMap.Walking", function () {
-      var walking = new AMap.Walking({
-        autoFitView: true,
-      });
-      walking.search([116.69, 39.9], [116.69, 39.6], function (status, route) {
-        if (status == "complete") {
-          drawRoute(route.routes[0]);
-        }
-      });
-    });
-    function drawRoute(routes) {
-      const steps = parseRouteToPath(routes);
-
-      var routeLine = new AMap.Polyline({
-        path: steps,
-        isOutline: true,
-        outlineColor: "red",
-        borderWeight: 2,
-        strokeWeight: 5,
-        strokeColor: "red",
-        lineJoin: "round",
-      });
-      map.add(routeLine);
-      map.setFitView(routeLine);
-      console.log(steps);
-    }
-    function parseRouteToPath(route) {
-      var path = [];
-
-      for (var i = 0, l = route.steps.length; i < l; i++) {
-        var step = route.steps[i];
-
-        for (var j = 0, n = step.path.length; j < n; j++) {
-          path.push(step.path[j]);
-        }
-      }
-
-      return path;
-    }
-
-    map.on("click", function (ev) {
-      console.log(ev.lnglat.lat + "," + ev.lnglat.lng);
-    });
-  </script> -->
   <script>
     function getRandomNum(start, end) {
       return Math.round(Math.random() * (end - start) + start);
@@ -158,16 +68,19 @@
 
     class GaoDeDraw {
       constructor(id, points) {
-        this.map = new AMap.Map(id);
-        this.points = points;
-        this.markers = [];
+        this.map = new AMap.Map(id, {
+          pitch:30, // 地图俯仰角度，有效范围 0 度- 83 度
+    viewMode:'3D', // 地图模式
+    terrain: true,
+    mapStyle: 'amap://styles/86b434afde723b99ce9e5fa2feba8542'
+        }); // 地图实例
+        this.points = points; // 点位坐源数据
+        this.markers = []; // 点位坐标
+        this.lng = "120.29104000000001"; // 我的经度
+        this.lat = "30.193892"; // 我的纬度
+        this.routeLine = null; // 绘制路径
         this.getUserGeo();
         this.drawPoints();
-        this.lng = "120.29104000000001";
-        this.lat = "30.193892";
-        this.map.on("click", (e) => {
-          console.log(e);
-        });
       }
       drawPoints() {
         this.points.forEach((item) => {
@@ -201,31 +114,26 @@
           if (status == "complete") {
             this.lng = result.position.lng;
             this.lat = result.position.lat;
-            let icon = new AMap.Icon({
-              size: new AMap.Size(19, 31), // 图标尺寸
-              image:
-                "https://img0.baidu.com/it/u=2747776293,3603828582&fm=253&fmt=auto&app=120&f=JPEG?w=750&h=500", // Icon的图像
-              imageSize: new AMap.Size(19, 31), // 根据所设置的大小拉伸或压缩图片
-            });
-            this.myMarker = new AMap.Marker({
-              icon,
-              position: [this.lng, this.lat],
-            });
-            this.map.add(this.myMarker);
-            this.map.setFitView([...this.markers, this.myMarker]);
           }
+          let icon = new AMap.Icon({
+            size: new AMap.Size(19, 31), // 图标尺寸
+            image:
+              "https://img0.baidu.com/it/u=2747776293,3603828582&fm=253&fmt=auto&app=120&f=JPEG?w=750&h=500", // Icon的图像
+            imageSize: new AMap.Size(19, 31), // 根据所设置的大小拉伸或压缩图片
+          });
+          this.myPositionMarker = new AMap.Marker({
+            icon,
+            position: [this.lng, this.lat],
+          });
+          this.map.add(this.myPositionMarker);
+          this.map.setFitView([...this.markers, this.myPositionMarker]);
         });
       }
       handleMarkerClick(lng, lat) {
         let walking = new AMap.Walking({
           autoFitView: true,
         });
-        console.log(this.lng, this.lat);
-        // debugger;
-
         walking.search([this.lng, this.lat], [lng, lat], (status, route) => {
-          // debugge
-
           if (status == "complete") {
             console.log(route, "route");
             alert(`距离目的地：${route.routes[0].distance}米`);
@@ -235,10 +143,9 @@
       }
       drawRoute(routes) {
         this.routeLine && this.map.remove(this.routeLine);
-        const steps = this.parseRouteToPath(routes);
-
+        const path = this.parseRouteToPath(routes);
         this.routeLine = new AMap.Polyline({
-          path: steps,
+          path: path,
           isOutline: true,
           outlineColor: "#0091ff",
           borderWeight: 2,
@@ -260,7 +167,17 @@
         }
         return path;
       }
+      getWeather(city) {
+        //创建天气查询实例
+    let weather = new AMap.Weather();
+
+//执行实时天气信息查询
+weather.getLive('婺源', function(err, data) {
+    console.log(err, data);
+});
+      }
     }
-    new GaoDeDraw("container", createRandomPoint());
+    let instance = new GaoDeDraw("container", createRandomPoint());
+    instance.getWeather();
   </script>
 </html>
